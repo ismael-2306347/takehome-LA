@@ -1,89 +1,81 @@
-# Desafío Técnico
+# Intérprete de red
 
-## Contexto
+API que recibe un dominio, resuelve sus registros DNS y consulta su registrador,
+y devuelve todo de forma estructurada.
 
-En el día a día de un desarrollador, entender qué pasa con un dominio es clave. Los comandos de red (`dig`, `nslookup`, `host`) devuelven información técnica que no siempre es fácil de leer rápidamente.
+## Requisitos
 
-Tu misión: construir una API que actúe como un **intérprete de red inteligente**. Dado un dominio, la API debe ejecutar un lookup DNS real y devolver sus registros de forma estructurada y legible por otra máquina.
+- Node.js 20 o superior
 
----
+## Cómo correrlo
 
-## Especificaciones Técnicas
+    run.bat      # Windows
+    ./run.sh     # Linux / Mac
 
-- **Tiempo límite:** Hasta 24 horas
-- **Lenguaje/Framework:** Libre (Node.js, Python, Go, etc.)
+El script instala las dependencias si hace falta y levanta el servidor en el
+puerto 3000. También se puede usar `npm install` y `npm start` directamente.
 
----
+## Configuración
 
-## Contrato de la API
+Las variables van en un archivo `.env` (ver `.env.example`):
 
-### Endpoint
+- `PORT`: puerto del servidor (por defecto 3000)
 
-```
-POST /analyze
-```
+## Uso
 
-### Input
+### `POST /analyze`
+
+Request:
 
 ```json
-{
-  "target": "google.com"
-}
+{ "target": "google.com" }
 ```
 
-### Output esperado
+Response (200):
 
 ```json
 {
   "target": "google.com",
-  "status": "healthy | degraded | unknown",
+  "status": "healthy",
   "dns_records": {
-    "A":     ["142.250.80.46"],
-    "MX":    ["10 smtp.google.com"],
-    "NS":    ["ns1.google.com"],
-    "TXT":   "No encontrado",
+    "A": ["142.250.80.46"],
+    "MX": ["10 smtp.google.com"],
+    "NS": ["ns1.google.com"],
+    "TXT": "No encontrado",
     "CNAME": "No encontrado"
   },
   "domain_registrar": "MarkMonitor Inc."
 }
 ```
 
-> Cada tipo de registro que no tenga resultados debe retornar el string `"No encontrado"` en lugar de un array vacío.
+Cada tipo de registro sin resultados devuelve el string `"No encontrado"` en
+lugar de un array vacío.
 
----
+El campo `status` puede tomar tres valores:
 
-## Requerimientos
+- `healthy`: el dominio resuelve y tiene registros A
+- `degraded`: el dominio resuelve pero no tiene registros A
+- `unknown`: el dominio no resuelve por un error de DNS que no es NXDOMAIN
 
-1. **Ejecución real:** el backend debe resolver los registros DNS ejecutando un comando del sistema operativo (`dig`, `nslookup` o `host`) o usando una librería DNS nativa. No uses datos hardcodeados.
+### Errores
 
-2. **Manejo de errores:** la API debe responder de forma clara ante:
-   - Un dominio que no existe (`NXDOMAIN`)
-   - Un input vacío o malformado
-   - ⚠️ Un input malicioso como `; rm -rf /` o `$(whoami)` — *este punto se va a testear*
+| Situación | Código |
+|---|---|
+| `target` ausente, vacío o con formato inválido | 400 |
+| JSON malformado | 400 |
+| El dominio no existe (NXDOMAIN) | 404 |
+| Error interno | 500 |
 
-3. **Sin credenciales en el código:** si usás alguna variable de configuración, debe ir en un `.env` (no commiteado) con un `.env.example` como referencia.
+Los errores devuelven un JSON con la forma `{ "error": "descripción" }`.
 
----
+## Tests
 
-## Criterios de Aceptación
+```
+npm test
+```
 
-**Correctitud del JSON**
-La respuesta debe respetar exactamente el contrato definido: tipos de datos correctos, todos los campos presentes y el string `"No encontrado"` cuando corresponda.
+Cubren la validación y sanitización del campo `target`.
 
-**Seguridad del input**
-El endpoint debe sanitizar el campo `target` antes de usarlo. Inputs como `; rm -rf /` o `$(whoami)` no deben ejecutarse ni romper la aplicación.
+## Decisiones de diseño
 
-**Manejo de errores**
-Los errores deben devolver un HTTP status code apropiado (400, 404, 500) con un mensaje descriptivo en JSON. La API nunca debe caerse ante un input inesperado.
-
-**Código limpio**
-El proyecto debe tener una estructura clara, nombres descriptivos y un `README` con instrucciones para correrlo localmente.
-
----
-
-## Entrega
-
-1. Hacé un **fork** de este repositorio
-2. Trabajá en tu fork con commits claros y descriptivos
-3. El proyecto debe incluir un script portable para correrlo (`.exe`, `.sh` o `.bat`)
-4. Cuando termines, enviá por correo o mensaje la **URL de tu fork**
+Ver [docs/decisiones.md](docs/decisiones.md).
