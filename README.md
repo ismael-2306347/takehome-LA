@@ -76,6 +76,37 @@ npm test
 
 Cubren la validación y sanitización del campo `target`.
 
+## Probar el endpoint a mano
+
+Con el servidor corriendo, en otra terminal.
+
+curl (Linux, Mac, Git Bash):
+
+```
+curl -s -i -X POST http://localhost:3000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"target":"google.com"}'
+```
+
+PowerShell:
+
+```
+Invoke-RestMethod -Uri http://localhost:3000/analyze -Method Post `
+  -ContentType 'application/json' -Body '{"target":"google.com"}'
+```
+
+Casos a verificar cambiando el body:
+
+| Body | Resultado |
+|---|---|
+| `{"target":"google.com"}` | 200, contrato completo, `status: healthy` |
+| `{"target":"dominio-inexistente-9xk3.com"}` | 404 |
+| `{"target":""}` | 400 |
+| `{}` | 400 |
+| `{"target":"; rm -rf /"}` | 400, no se ejecuta |
+| `{"target":"$(whoami)"}` | 400, no se ejecuta |
+| `{"target":` | 400 (JSON malformado) |
+
 ## Decisiones de diseño
 
 Ver [docs/decisiones.md](docs/decisiones.md).
