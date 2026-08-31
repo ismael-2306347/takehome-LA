@@ -1,11 +1,6 @@
-import { validateDomain } from './src/validate.js';
+import { resolveAll } from './src/dns.js';
 
-const inputs = ['google.com', '  GOOGLE.com  ', '', undefined, '; rm -rf /', '$(whoami)', 'sub.dominio.co.uk', 'google..com'];
-
-for (const i of inputs) {
-  try {
-    console.log(JSON.stringify(i), '->', validateDomain(i));
-  } catch (e) {
-    console.log(JSON.stringify(i), '-> ERROR:', e.message);
-  }
+for (const d of ['google.com', 'example.com', 'nxdomain-que-no-existe-1234567.com']) {
+  console.log('==', d);
+  console.log(JSON.stringify(await resolveAll(d), null, 2));
 }
