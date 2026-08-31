@@ -8,13 +8,13 @@ const clean = (target) => target.trim().toLowerCase();
 
 export function validateDomain (target) {
     if (typeof target !== 'string') {
-        throw new Error('Target must be a string');
+        throw new Error('el campo "target" debe ser un string');
     }
    
     target = clean(target);
     
     if (!DOMAIN.test(target)) {
-        throw new Error('Invalid domain format');
+        throw new Error('el campo "target" tiene un formato de dominio inválido');
     }
 
     return target;

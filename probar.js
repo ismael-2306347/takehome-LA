@@ -1,5 +1,6 @@
-import { lookupRegistrar } from './src/whois.js';
+import { analyze } from './src/analyze.js';
 
-for (const d of ['google.com', 'github.com', 'wikipedia.org', 'ALGO999999RARO.COM']) {
-  console.log(d, '->', await lookupRegistrar(d));
+for (const d of ['google.com', 'example.com', 'dominio-que-no-existe-99xyz.com']) {
+  console.log('==', d);
+  console.log(JSON.stringify(await analyze(d), null, 2));
 }
