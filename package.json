@@ -1,0 +1,27 @@
+{
+  "name": "takehome-la",
+  "version": "1.0.0",
+  "description": "En el día a día de un desarrollador, entender qué pasa con un dominio es clave. Los comandos de red (`dig`, `nslookup`, `host`) devuelven información técnica que no siempre es fácil de leer rápidamente.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ismael-2306347/takehome-LA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ismael-2306347/takehome-LA/issues"
+  },
+  "homepage": "https://github.com/ismael-2306347/takehome-LA#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "whois": "^2.16.2"
+  }
+}
