@@ -36,7 +36,9 @@ export async function resolveAll(domain) {
 
   // nxdomain: las 5 fallaron y todas con ENOTFOUND
   const nxdomain = [a, mx, ns, txt, cname].every(r => r.error === 'ENOTFOUND');
-
+  
+  const resolved = [a, mx, ns, txt, cname].some((r) => r.value);
+  
   return {
     records: {
       A: orNotFound(A),
@@ -46,5 +48,6 @@ export async function resolveAll(domain) {
       CNAME: orNotFound(CNAME),
     },
     nxdomain,
-  };
+    resolved,
+};
 }
